@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информационная платформа</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-accent"></div>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-block">
+                <div class="logo-icon">📱</div>
+                <div class="logo-text">
+                    <h1>Информационная платформа</h1>
+                    <p>Поиск банкоматов и анализ данных</p>
+                </div>
+            </div>
+            <div class="header-features">
+                <span class="feature-badge">🏧 24/7</span>
+                <span class="feature-badge">🤖 AI Assistant</span>
+                <span class="feature-badge">📁 Мультиформат</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="atm">🏧 Поиск банкоматов</button>
+            <button class="tab-btn" data-tab="files">📁 Анализ файлов</button>
+            <button class="tab-btn" data-tab="ai">🤖 AI Ассистент</button>
+        </div>
+
+        <!-- Вкладка 1: Поиск банкоматов -->
+        <div id="tab-atm" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Поиск банкоматов</h2>
+                    <p>Введите город, адрес, номер или код ВСП</p>
+                </div>
+                <div class="search-area">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="atm-search" class="search-input" placeholder="Например: Архангельск, Москва, 12345678">
+                    </div>
+                    <button id="atm-search-btn" class="btn-primary">Найти</button>
+                </div>
+                <div class="quick-filters">
+                    <span class="filter-chip" data-query="Архангельск">🏙️ Архангельск</span>
+                    <span class="filter-chip" data-query="Москва">🏙️ Москва</span>
+                    <span class="filter-chip" data-query="Санкт-Петербург">🏙️ Санкт-Петербург</span>
+                    <span class="filter-chip" data-query="12345678">🔢 По номеру 12345678</span>
+                    <span class="filter-chip" data-query="ВСП-001-1001">🏦 По ВСП-001-1001</span>
+                </div>
+                <div id="atm-stats" class="stats-panel"></div>
+                <div id="atm-results" class="results-grid"></div>
+            </div>
+        </div>
+
+        <!-- Вкладка 2: Анализ файлов -->
+        <div id="tab-files" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Загрузка и анализ файлов</h2>
+                    <p>Поддерживаются: CSV, TXT, PDF, DOCX, XLSX</p>
+                </div>
+                <div class="upload-area" id="dropzone">
+                    <div class="upload-icon">📂</div>
+                    <p>Перетащите файл или нажмите для выбора</p>
+                    <input type="file" id="file-input" accept=".csv,.txt,.pdf,.docx,.xlsx,.xls" style="display:none">
+                    <button id="select-file-btn" class="btn-secondary">Выбрать файл</button>
+                </div>
+                <div id="upload-status"></div>
+                <div id="file-search-section" style="display:none">
+                    <h3>🔍 Поиск в файле</h3>
+                    <div class="search-input-wrapper">
+                        <input type="text" id="file-search" class="search-input" placeholder="Поиск по содержимому...">
+                        <button id="file-search-btn" class="btn-primary">Искать</button>
+                    </div>
+                    <div id="file-stats"></div>
+                    <div id="file-results" class="results-grid"></div>
+                    <button id="export-results-btn" class="btn-secondary" style="margin-top:20px">💾 Сохранить результаты</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вкладка 3: AI Ассистент -->
+        <div id="tab-ai" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>🤖 AI Ассистент</h2>
+                    <p>Задайте вопрос — нейросеть поможет</p>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message assistant">
+                            <div class="message-avatar">🤖</div>
+                            <div class="message-content">Здравствуйте! Я AI-ассистент. Спрашивайте!</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <textarea id="chat-input" rows="2" placeholder="Введите вопрос..."></textarea>
+                        <button id="chat-send-btn" class="btn-primary">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p>© 2026 Информационная платформа</p>
+        </div>
+    </footer>
+
+    <script>
+        // ========== НАСТРОЙКИ ==========
+        // ВСТАВЬТЕ СЮДА ВАШ URL ИЗ RENDER
+        const AI_BACKEND_URL = 'https://gigachat-assistant.onrender.com';
+        // =================================
+
+        // БАЗА БАНКОМАТОВ
+        const atms = [
+            { number: "12345678", address: "Архангельская область, Архангельск, пр. Троицкий д.45", vsp: "ВСП-001-1001", city: "Архангельск" },
+            { number: "23456789", address: "Архангельская область, Северодвинск, ул. Ленина д.12", vsp: "ВСП-001-1002", city: "Северодвинск" },
+            { number: "34567890", address: "Архангельская область, Котлас, ул. Некрасова д.23", vsp: "ВСП-002-2001", city: "Котлас" },
+            { number: "45678901", address: "Архангельская область, Новодвинск, ул. Фронтовых бригад д.8", vsp: "ВСП-002-2002", city: "Новодвинск" },
+            { number: "56789012", address: "Московская область, Москва, ул. Тверская д.6", vsp: "ВСП-003-3001", city: "Москва" },
+            { number: "67890123", address: "Московская область, Москва, Кутузовский пр. д.32", vsp: "ВСП-003-3002", city: "Москва" },
+            { number: "78901234", address: "Московская область, Москва, Ленинский пр. д.15", vsp: "ВСП-004-4001", city: "Москва" },
+            { number: "89012345", address: "Ленинградская область, Санкт-Петербург, Невский пр. д.28", vsp: "ВСП-004-4002", city: "Санкт-Петербург" },
+            { number: "90123456", address: "Ленинградская область, Санкт-Петербург, ул. Садовая д.17", vsp: "ВСП-005-5001", city: "Санкт-Петербург" },
+            { number: "01234567", address: "Ленинградская область, Санкт-Петербург, Лиговский пр. д.50", vsp: "ВСП-005-5002", city: "Санкт-Петербург" }
+        ];
+
+        // Функция поиска банкоматов
+        function searchAtms(query) {
+            if (!query) return [];
+            const q = query.toLowerCase();
+            return atms.filter(atm => 
+                atm.address.toLowerCase().includes(q) ||
+                atm.number.includes(q) ||
+                atm.vsp.toLowerCase().includes(q) ||
+                atm.city.toLowerCase().includes(q)
+            ).slice(0, 20);
+        }
+
+        // Отображение результатов
+        function renderAtmResults(results, query) {
+            const resultsDiv = document.getElementById('atm-results');
+            const statsDiv = document.getElementById('atm-stats');
+            
+            if (!results || results.length === 0) {
+                resultsDiv.innerHTML = `<div class="empty-state"><div class="empty-icon">🏧❓</div><div class="empty-title">Банкоматы не найдены</div><div class="empty-text">По запросу «${escapeHtml(query)}» ничего не найдено.</div></div>`;
+                statsDiv.innerHTML = '';
+                return;
+            }
+            
+            statsDiv.innerHTML = `🎯 Найдено: ${results.length}`;
+            resultsDiv.innerHTML = results.map(atm => `
+                <div class="atm-card">
+                    <div class="card-header">
+                        <div class="atm-icon">🏧</div>
+                        <div class="atm-number">№${escapeHtml(atm.number)}</div>
+                    </div>
+                    <div class="info-row"><div class="info-icon">📍</div><div>${escapeHtml(atm.address)}</div></div>
+                    <div class="info-row"><div class="info-icon">🏦</div><div><span class="vsp-badge">${escapeHtml(atm.vsp)}</span></div></div>
+                </div>
+            `).join('');
+        }
+
+        // Переключение вкладок
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+            });
+        });
+
+        // Поиск банкоматов
+        const atmSearch = document.getElementById('atm-search');
+        const atmBtn = document.getElementById('atm-search-btn');
+        
+        async function handleAtmSearch() {
+            const query = atmSearch.value.trim();
+            if (!query) return;
+            const results = searchAtms(query);
+            renderAtmResults(results, query);
+        }
+        
+        atmBtn.onclick = handleAtmSearch;
+        atmSearch.onkeypress = e => e.key === 'Enter' && handleAtmSearch();
+        
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.onclick = () => { atmSearch.value = chip.dataset.query; handleAtmSearch(); };
+        });
+
+        // Загрузка файлов
+        let currentFilename = null;
+        const fileInput = document.getElementById('file-input');
+        document.getElementById('select-file-btn').onclick = () => fileInput.click();
+        
+        fileInput.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            const statusDiv = document.getElementById('upload-status');
+            statusDiv.innerHTML = '<div class="info-message">Загрузка...</div>';
+            try {
+                const resp = await fetch('/api/upload', { method: 'POST', body: formData });
+                const data = await resp.json();
+                if (data.success) {
+                    currentFilename = data.filename;
+                    statusDiv.innerHTML = `<div class="success-message">✅ Загружено ${data.rows} записей</div>`;
+                    document.getElementById('file-search-section').style.display = 'block';
+                    if (data.preview?.length) {
+                        statusDiv.innerHTML += `<div class="preview-section"><pre>${JSON.stringify(data.preview, null, 2)}</pre></div>`;
+                    }
+                } else {
+                    statusDiv.innerHTML = `<div class="error-message">❌ ${data.message}</div>`;
+                }
+            } catch(e) { statusDiv.innerHTML = '<div class="error-message">Ошибка загрузки</div>'; }
+        };
+
+        // Поиск в файле
+        document.getElementById('file-search-btn').onclick = async () => {
+            const query = document.getElementById('file-search').value.trim();
+            if (!query || !currentFilename) return;
+            const resultsDiv = document.getElementById('file-results');
+            const statsDiv = document.getElementById('file-stats');
+            resultsDiv.innerHTML = '<div class="loader"></div>';
+            try {
+                const resp = await fetch(`/api/search-in-file?filename=${encodeURIComponent(currentFilename)}&q=${encodeURIComponent(query)}`);
+                const data = await resp.json();
+                if (data.success && data.data.length) {
+                    statsDiv.innerHTML = `🔍 Найдено: ${data.count}`;
+                    resultsDiv.innerHTML = data.data.map(item => `<div class="result-card"><pre>${escapeHtml(JSON.stringify(item, null, 2))}</pre></div>`).join('');
+                } else {
+                    resultsDiv.innerHTML = '<div class="empty-state">Ничего не найдено</div>';
+                }
+            } catch(e) { resultsDiv.innerHTML = '<div class="empty-state">Ошибка</div>'; }
+        };
+
+        // Экспорт
+        document.getElementById('export-results-btn').onclick = async () => {
+            const items = [];
+            document.querySelectorAll('#file-results .result-card pre').forEach(pre => {
+                try { items.push(JSON.parse(pre.innerText)); } catch(e) { items.push({ text: pre.innerText }); }
+            });
+            if (!items.length) return alert('Нет данных');
+            const resp = await fetch('/api/export', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: items }) });
+            if (resp.ok) {
+                const blob = await resp.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `export_${Date.now()}.csv`;
+                a.click();
+            }
+        };
+
+        // AI Ассистент
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function sendToAI() {
+            const inputEl = document.getElementById('chat-input');
+            const question = inputEl.value.trim();
+            if (!question) return;
+            
+            const sendBtn = document.getElementById('chat-send-btn');
+            sendBtn.disabled = true;
+            inputEl.disabled = true;
+            
+            const messagesDiv = document.getElementById('chat-messages');
+            messagesDiv.insertAdjacentHTML('beforeend', `
+                <div class="message user">
+                    <div class="message-avatar">👤</div>
+                    <div class="message-content">${escapeHtml(question)}</div>
+                </div>
+            `);
+            inputEl.value = '';
+            
+            const loadingId = 'loading-' + Date.now();
+            messagesDiv.insertAdjacentHTML('beforeend', `
+                <div class="message assistant" id="${loadingId}">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">Печатает...</div>
+                </div>
+            `);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            try {
+                const response = await fetch(`${AI_BACKEND_URL}/gigachat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: question })
+                });
+                
+                document.getElementById(loadingId)?.remove();
+                
+                if (!response.ok) throw new Error(`Ошибка ${response.status}`);
+                const data = await response.json();
+                
+                messagesDiv.insertAdjacentHTML('beforeend', `
+                    <div class="message assistant">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">${escapeHtml(data.answer)}</div>
+                    </div>
+                `);
+            } catch (error) {
+                document.getElementById(loadingId)?.remove();
+                messagesDiv.insertAdjacentHTML('beforeend', `
+                    <div class="message assistant">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">❌ Ошибка при обращении к серверу. Пожалуйста, попробуйте позже.</div>
+                    </div>
+                `);
+            } finally {
+                sendBtn.disabled = false;
+                inputEl.disabled = false;
+                inputEl.focus();
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        }
+        
+        document.getElementById('chat-send-btn').onclick = sendToAI;
+        document.getElementById('chat-input').onkeypress = e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendToAI());
+    </script>
+</body>
+</html>
