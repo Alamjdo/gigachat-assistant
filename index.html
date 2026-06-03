@@ -2,336 +2,1041 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Информационная платформа</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ATM Информационная платформа</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+
+
+<div id="login-overlay" class="login-overlay">
+    <div class="login-card">
+        <div class="login-logo">🏧</div>
+        <h2 class="login-title">ATM Платформа</h2>
+        <p class="login-subtitle">Войдите в аккаунт для доступа</p>
+        <div id="login-error" class="login-error" style="display:none;"></div>
+        <div class="login-field">
+            <label>Логин</label>
+            <input type="text" id="login-username" placeholder="Введите логин" autocomplete="username">
+        </div>
+        <div class="login-field">
+            <label>Пароль</label>
+            <input type="password" id="login-password" placeholder="Введите пароль" autocomplete="current-password">
+        </div>
+        <button id="login-btn" class="btn-primary login-submit-btn">Войти</button>
+        <p class="login-hint">По умолчанию: admin / admin</p>
+    </div>
+</div>
+
+
+<div id="app" style="display:none;">
+
     <div class="top-accent"></div>
+
     <header class="main-header">
         <div class="header-container">
             <div class="logo-block">
-                <div class="logo-icon">📱</div>
+                <div class="logo-icon">🏧</div>
                 <div class="logo-text">
-                    <h1>Информационная платформа</h1>
-                    <p>Поиск банкоматов и анализ данных</p>
+                    <h1>ATM Информационная платформа</h1>
+                    <p>Поиск по загруженным файлам | Анализ данных | ИИ-ассистент</p>
                 </div>
             </div>
-            <div class="header-features">
-                <span class="feature-badge">🏧 24/7</span>
-                <span class="feature-badge">🤖 AI Assistant</span>
-                <span class="feature-badge">📁 Мультиформат</span>
+            <div class="header-right">
+
+                <div id="global-active-file" class="global-active-file" style="display:none;">
+                    <span class="active-file-dot"></span>
+                    <span id="global-file-name">—</span>
+                </div>
+                <div class="header-user">
+                    <span class="user-badge" id="user-badge">👤 —</span>
+                    <button id="logout-btn" class="btn-logout">Выйти</button>
+                </div>
             </div>
         </div>
     </header>
 
+
+    <div id="active-file-banner" class="active-file-banner" style="display:none;">
+        <div class="banner-inner">
+            <span class="banner-icon">📄</span>
+            <span id="banner-filename">—</span>
+            <span id="banner-rows" class="banner-rows"></span>
+            <button id="banner-clear-btn" class="banner-clear-btn" title="Снять выбор файла">✕</button>
+        </div>
+    </div>
+
     <div class="container">
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="atm">🏧 Поиск банкоматов</button>
-            <button class="tab-btn" data-tab="files">📁 Анализ файлов</button>
-            <button class="tab-btn" data-tab="ai">🤖 AI Ассистент</button>
+        <div class="tabs" id="tabs-bar">
+            <button class="tab-btn active" data-tab="atm">🔍 Поиск</button>
+            <button class="tab-btn" data-tab="files">📁 Файлы</button>
+            <button class="tab-btn" data-tab="ai">🤖 ИИ-ассистент</button>
+            <button class="tab-btn" data-tab="yandex">☁️ Яндекс.Диск</button>
+            <button class="tab-btn tab-btn-admin" data-tab="admin" id="admin-tab-btn" style="display:none;">⚙️ Админ</button>
+            <button class="tab-btn" data-tab="profile" id="profile-tab-btn">👤 Профиль</button>
         </div>
 
-        <!-- Вкладка 1: Поиск банкоматов -->
+
         <div id="tab-atm" class="tab-content active">
             <div class="card">
                 <div class="card-header">
-                    <h2>Поиск банкоматов</h2>
-                    <p>Введите город, адрес, номер или код ВСП</p>
+                    <h2>🔍 Поиск по загруженному файлу</h2>
+                    <p>Загрузите файл на вкладке «Файлы», затем ищите по его содержимому</p>
+                </div>
+
+                <div class="file-selector-row">
+                    <label class="file-selector-label">Файл для поиска:</label>
+                    <select id="search-file-select" class="file-select">
+                        <option value="">— загрузите файл на вкладке «Файлы» —</option>
+                    </select>
                 </div>
                 <div class="search-area">
                     <div class="search-input-wrapper">
                         <span class="search-icon">🔍</span>
-                        <input type="text" id="atm-search" class="search-input" placeholder="Например: Архангельск, Москва, 12345678">
+                        <input type="text" id="atm-search" class="search-input" placeholder="Введите поисковый запрос..." autocomplete="off">
                     </div>
                     <button id="atm-search-btn" class="btn-primary">Найти</button>
-                </div>
-                <div class="quick-filters">
-                    <span class="filter-chip" data-query="Архангельск">🏙️ Архангельск</span>
-                    <span class="filter-chip" data-query="Москва">🏙️ Москва</span>
-                    <span class="filter-chip" data-query="Санкт-Петербург">🏙️ Санкт-Петербург</span>
-                    <span class="filter-chip" data-query="12345678">🔢 По номеру 12345678</span>
-                    <span class="filter-chip" data-query="ВСП-001-1001">🏦 По ВСП-001-1001</span>
+                    <button id="clear-search-btn" class="btn-secondary">Очистить</button>
                 </div>
                 <div id="atm-stats" class="stats-panel"></div>
                 <div id="atm-results" class="results-grid"></div>
             </div>
         </div>
 
-        <!-- Вкладка 2: Анализ файлов -->
+
         <div id="tab-files" class="tab-content">
             <div class="card">
                 <div class="card-header">
-                    <h2>Загрузка и анализ файлов</h2>
-                    <p>Поддерживаются: CSV, TXT, PDF, DOCX, XLSX</p>
+                    <h2>📁 Загрузка и управление файлами</h2>
+                    <p>Загрузите файл — он станет доступен всем пользователям платформы</p>
                 </div>
                 <div class="upload-area" id="dropzone">
                     <div class="upload-icon">📂</div>
                     <p>Перетащите файл или нажмите для выбора</p>
-                    <input type="file" id="file-input" accept=".csv,.txt,.pdf,.docx,.xlsx,.xls" style="display:none">
+                    <p class="upload-formats">CSV · TXT · PDF · DOCX · XLSX · XLS · DOC · RTF</p>
+                    <input type="file" id="file-input" accept=".csv,.txt,.pdf,.docx,.xlsx,.xls,.doc,.rtf" style="display:none">
                     <button id="select-file-btn" class="btn-secondary">Выбрать файл</button>
                 </div>
                 <div id="upload-status"></div>
-                <div id="file-search-section" style="display:none">
-                    <h3>🔍 Поиск в файле</h3>
-                    <div class="search-input-wrapper">
-                        <input type="text" id="file-search" class="search-input" placeholder="Поиск по содержимому...">
-                        <button id="file-search-btn" class="btn-primary">Искать</button>
+
+
+                <div class="files-list-section">
+                    <div class="files-list-header">
+                        <h3>📋 Загруженные файлы (доступны всем)</h3>
+                        <button id="refresh-files-btn" class="btn-icon" title="Обновить список">🔄</button>
                     </div>
-                    <div id="file-stats"></div>
-                    <div id="file-results" class="results-grid"></div>
-                    <button id="export-results-btn" class="btn-secondary" style="margin-top:20px">💾 Сохранить результаты</button>
+                    <div id="files-list-container">
+                        <div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Файлов пока нет</div></div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Вкладка 3: AI Ассистент -->
+
         <div id="tab-ai" class="tab-content">
             <div class="card">
                 <div class="card-header">
-                    <h2>🤖 AI Ассистент</h2>
-                    <p>Задайте вопрос — нейросеть поможет</p>
+                    <h2>🤖 ИИ-ассистент на базе GigaChat</h2>
+                    <p>Задайте вопрос о загруженных файлах или на любую тему</p>
                 </div>
+
+
+                <div class="ai-settings-row">
+                    <div class="ai-setting-item">
+                        <label>Файл контекста:</label>
+                        <select id="ai-file-select" class="file-select">
+                            <option value="">— без файла —</option>
+                        </select>
+                    </div>
+                    <div class="ai-setting-item">
+                        <label>Макс. строк для анализа:</label>
+                        <select id="ai-max-rows" class="file-select">
+                            <option value="200">200 строк</option>
+                            <option value="500" selected>500 строк</option>
+                            <option value="1000">1000 строк</option>
+                            <option value="2000">2000 строк</option>
+                        </select>
+                    </div>
+                    <div class="ai-rows-info" id="ai-rows-info"></div>
+                </div>
+
                 <div class="chat-container">
                     <div class="chat-messages" id="chat-messages">
                         <div class="message assistant">
                             <div class="message-avatar">🤖</div>
-                            <div class="message-content">Здравствуйте! Я AI-ассистент. Спрашивайте!</div>
+                            <div class="message-content">
+                                <strong>Привет! Я ИИ-ассистент.</strong><br><br>
+                                Я умею:
+                                <ul>
+                                    <li>📌 Отвечать на вопросы по содержимому файлов</li>
+                                    <li>📊 Анализировать данные из CSV, TXT, PDF, DOCX, Excel</li>
+                                    <li>🧠 Обрабатывать файлы с более чем 200 строками (чанкование)</li>
+                                    <li>💬 Помогать с любыми вопросами</li>
+                                </ul>
+                                <br>
+                                Выберите файл выше и задайте вопрос!
+                            </div>
                         </div>
                     </div>
                     <div class="chat-input-area">
-                        <textarea id="chat-input" rows="2" placeholder="Введите вопрос..."></textarea>
+                        <textarea id="chat-input" rows="2" placeholder="Введите вопрос... (Enter — отправить, Shift+Enter — перенос)" autocomplete="off"></textarea>
                         <button id="chat-send-btn" class="btn-primary">Отправить</button>
+                    </div>
+                    <div class="chat-context-info" id="chat-context-info">
+                        <div class="context-badge">💡 Выберите файл и количество строк для анализа</div>
                     </div>
                 </div>
             </div>
         </div>
+
+
+        <div id="tab-yandex" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>☁️ Яндекс.Диск</h2>
+                    <p>Загрузите файл по публичной ссылке</p>
+                </div>
+                <div class="cloud-instruction">
+                    <div class="info-message">
+                        🔧 <strong>Как загрузить файл с Яндекс.Диска:</strong><br>
+                        1. Откройте Яндекс.Диск и найдите нужный файл<br>
+                        2. Нажмите «Поделиться» → «Скопировать ссылку»<br>
+                        3. Вставьте ссылку в поле ниже и нажмите «Загрузить»
+                    </div>
+                </div>
+                <div class="yandex-input-area">
+                    <input type="text" id="yandex-url" class="search-input" placeholder="https://disk.yandex.ru/d/..." autocomplete="off">
+                    <button id="load-yandex-btn" class="btn-primary">📥 Загрузить</button>
+                </div>
+                <div id="yandex-status" class="yandex-status"></div>
+                <div id="yandex-preview" class="yandex-preview"></div>
+                <div id="yandex-import-section" style="display:none; margin-top: 20px;">
+                    <button id="yandex-import-btn" class="btn-primary import-btn">✅ Файл активен — перейти к поиску</button>
+                    <div id="yandex-import-status" style="margin-top: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="tab-admin" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>⚙️ Администрирование</h2>
+                    <p>Управление пользователями и сервером</p>
+                </div>
+
+
+                <div class="admin-section">
+                    <h3>🔄 Продление работы сайта</h3>
+                    <p class="admin-hint">Нажмите кнопку, чтобы перезагрузить сайт и обновить таймер активности на PythonAnywhere.</p>
+                    <button id="extend-site-btn" class="btn-primary">🚀 Продлить / перезагрузить сайт</button>
+                    <div id="extend-status" style="margin-top: 12px;"></div>
+                </div>
+
+                <hr class="admin-divider">
+
+
+                <div class="admin-section">
+                    <h3>👥 Пользователи</h3>
+                    <div id="users-list" class="users-list"></div>
+                    <div class="add-user-form">
+                        <h4>Добавить пользователя</h4>
+                        <div class="add-user-row">
+                            <input type="text" id="new-username" placeholder="Логин" class="search-input" style="max-width:180px;">
+                            <input type="password" id="new-password" placeholder="Пароль" class="search-input" style="max-width:180px;">
+                            <select id="new-role" class="file-select" style="max-width:140px;">
+                                <option value="user">Пользователь</option>
+                                <option value="admin">Администратор</option>
+                            </select>
+                            <button id="add-user-btn" class="btn-primary">Добавить</button>
+                        </div>
+                        <div id="add-user-status" style="margin-top: 10px;"></div>
+                    </div>
+
+                <hr class="admin-divider">
+
+
+                <div class="admin-section">
+                    <h3>🔑 Сменить пароль пользователю</h3>
+                    <p class="admin-hint">Администратор может сменить пароль любому пользователю без знания текущего.</p>
+                    <div class="change-password-form">
+                        <div class="add-user-row" style="align-items:flex-end; flex-wrap:wrap;">
+                            <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:160px;">
+                                <label style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;">Пользователь</label>
+                                <select id="admin-pw-user" class="file-select">
+                                    <option value="">— выберите —</option>
+                                </select>
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:160px;">
+                                <label style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;">Новый пароль</label>
+                                <input type="password" id="admin-new-pw" placeholder="Новый пароль" class="search-input" autocomplete="new-password">
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:160px;">
+                                <label style="font-size:.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;">Повтор</label>
+                                <input type="password" id="admin-confirm-pw" placeholder="Повторите пароль" class="search-input" autocomplete="new-password">
+                            </div>
+                            <button id="admin-change-pw-btn" class="btn-primary" style="flex-shrink:0;">💾 Сменить</button>
+                        </div>
+                        <div id="admin-pw-status" style="margin-top: 12px;"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="tab-profile" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>👤 Мой профиль</h2>
+                    <p>Управление вашей учётной записью</p>
+                </div>
+
+                <div class="admin-section">
+                    <h3>ℹ️ Информация об аккаунте</h3>
+                    <div class="profile-info-block">
+                        <div class="profile-info-row">
+                            <span class="profile-info-label">Логин</span>
+                            <span class="profile-info-value" id="profile-username-display">—</span>
+                        </div>
+                        <div class="profile-info-row">
+                            <span class="profile-info-label">Роль</span>
+                            <span class="profile-info-value" id="profile-role-display">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="admin-divider">
+
+                <div class="admin-section">
+                    <h3>🔑 Смена пароля</h3>
+                    <p class="admin-hint">Введите текущий пароль и укажите новый.</p>
+                    <div class="change-password-form">
+                        <div class="login-field">
+                            <label>Текущий пароль</label>
+                            <input type="password" id="profile-old-pw" placeholder="Введите текущий пароль" autocomplete="current-password">
+                        </div>
+                        <div class="login-field">
+                            <label>Новый пароль</label>
+                            <input type="password" id="profile-new-pw" placeholder="Минимум 4 символа" autocomplete="new-password">
+                        </div>
+                        <div class="login-field">
+                            <label>Повторите новый пароль</label>
+                            <input type="password" id="profile-confirm-pw" placeholder="Повторите новый пароль" autocomplete="new-password">
+                        </div>
+                        <button id="profile-change-pw-btn" class="btn-primary">Сохранить новый пароль</button>
+                        <div id="profile-pw-status" style="margin-top:14px;"></div>
+                    </div>
+                </div>
+
+                <hr class="admin-divider">
+
+                <div class="admin-section">
+                    <button id="profile-logout-btn" class="btn-danger" style="padding:10px 22px;font-size:.9rem;">Выйти из аккаунта</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <footer class="main-footer">
         <div class="footer-container">
-            <p>© 2026 Информационная платформа</p>
+            <p>© 2026 Информационная платформа | Поиск по файлам | Работает на GigaChat</p>
         </div>
     </footer>
 
-    <script>
+</div>
 
-        const AI_BACKEND_URL = 'https://gigachat-assistant.onrender.com';
-        // =================================
+<script>
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = String(text);
+    return div.innerHTML;
+}
 
-        // БАЗА БАНКОМАТОВ
-        const atms = [
-            { number: "12345678", address: "Архангельская область, Архангельск, пр. Троицкий д.45", vsp: "ВСП-001-1001", city: "Архангельск" },
-            { number: "23456789", address: "Архангельская область, Северодвинск, ул. Ленина д.12", vsp: "ВСП-001-1002", city: "Северодвинск" },
-            { number: "34567890", address: "Архангельская область, Котлас, ул. Некрасова д.23", vsp: "ВСП-002-2001", city: "Котлас" },
-            { number: "45678901", address: "Архангельская область, Новодвинск, ул. Фронтовых бригад д.8", vsp: "ВСП-002-2002", city: "Новодвинск" },
-            { number: "56789012", address: "Московская область, Москва, ул. Тверская д.6", vsp: "ВСП-003-3001", city: "Москва" },
-            { number: "67890123", address: "Московская область, Москва, Кутузовский пр. д.32", vsp: "ВСП-003-3002", city: "Москва" },
-            { number: "78901234", address: "Московская область, Москва, Ленинский пр. д.15", vsp: "ВСП-004-4001", city: "Москва" },
-            { number: "89012345", address: "Ленинградская область, Санкт-Петербург, Невский пр. д.28", vsp: "ВСП-004-4002", city: "Санкт-Петербург" },
-            { number: "90123456", address: "Ленинградская область, Санкт-Петербург, ул. Садовая д.17", vsp: "ВСП-005-5001", city: "Санкт-Петербург" },
-            { number: "01234567", address: "Ленинградская область, Санкт-Петербург, Лиговский пр. д.50", vsp: "ВСП-005-5002", city: "Санкт-Петербург" }
-        ];
+function showMsg(el, type, text) {
+    const classes = { success: 'success-message', error: 'error-message', info: 'info-message' };
+    el.innerHTML = `<div class="${classes[type] || 'info-message'}">${escapeHtml(text)}</div>`;
+}
 
-        // Функция поиска банкоматов
-        function searchAtms(query) {
-            if (!query) return [];
-            const q = query.toLowerCase();
-            return atms.filter(atm => 
-                atm.address.toLowerCase().includes(q) ||
-                atm.number.includes(q) ||
-                atm.vsp.toLowerCase().includes(q) ||
-                atm.city.toLowerCase().includes(q)
-            ).slice(0, 20);
-        }
+let currentUser = null;
+let currentRole = null;
 
-        // Отображение результатов
-        function renderAtmResults(results, query) {
-            const resultsDiv = document.getElementById('atm-results');
-            const statsDiv = document.getElementById('atm-stats');
-            
-            if (!results || results.length === 0) {
-                resultsDiv.innerHTML = `<div class="empty-state"><div class="empty-icon">🏧❓</div><div class="empty-title">Банкоматы не найдены</div><div class="empty-text">По запросу «${escapeHtml(query)}» ничего не найдено.</div></div>`;
-                statsDiv.innerHTML = '';
-                return;
-            }
-            
-            statsDiv.innerHTML = `🎯 Найдено: ${results.length}`;
-            resultsDiv.innerHTML = results.map(atm => `
-                <div class="atm-card">
-                    <div class="card-header">
-                        <div class="atm-icon">🏧</div>
-                        <div class="atm-number">№${escapeHtml(atm.number)}</div>
-                    </div>
-                    <div class="info-row"><div class="info-icon">📍</div><div>${escapeHtml(atm.address)}</div></div>
-                    <div class="info-row"><div class="info-icon">🏦</div><div><span class="vsp-badge">${escapeHtml(atm.vsp)}</span></div></div>
+async function checkAuth() {
+    const resp = await fetch('/api/me', { credentials: 'include' });
+    const data = await resp.json();
+    if (data.logged_in) {
+        currentUser = data.username;
+        currentRole = data.role;
+        showApp();
+    } else {
+        showLoginOverlay();
+    }
+}
+
+function showApp() {
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('user-badge').textContent = `👤 ${currentUser}`;
+    if (currentRole === 'admin') {
+        document.getElementById('admin-tab-btn').style.display = '';
+        loadUsers();
+    }
+    loadFilesList();
+    updateFileSelects();
+}
+
+function showLoginOverlay() {
+    document.getElementById('login-overlay').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+}
+
+document.getElementById('login-btn').onclick = async () => {
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    const errEl = document.getElementById('login-error');
+    errEl.style.display = 'none';
+
+    const resp = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ username, password })
+    });
+    const data = await resp.json();
+    if (data.success) {
+        currentUser = data.username;
+        currentRole = data.role;
+        showApp();
+    } else {
+        errEl.textContent = data.message || 'Ошибка входа';
+        errEl.style.display = 'block';
+    }
+};
+
+['login-username', 'login-password'].forEach(id => {
+    document.getElementById(id).addEventListener('keypress', e => {
+        if (e.key === 'Enter') document.getElementById('login-btn').click();
+    });
+});
+
+document.getElementById('logout-btn').onclick = async () => {
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+    currentUser = null; currentRole = null;
+    currentFilename = null;
+    showLoginOverlay();
+};
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+        if (btn.dataset.tab === 'profile') refreshProfileTab();
+    });
+});
+
+let currentFilename = null;
+let currentFileRows = 0;
+
+function setActiveFile(filename, rows) {
+    currentFilename = filename;
+    currentFileRows = rows || 0;
+
+    const banner = document.getElementById('active-file-banner');
+    const globalFile = document.getElementById('global-active-file');
+    if (filename) {
+        document.getElementById('banner-filename').textContent = filename;
+        document.getElementById('banner-rows').textContent = `(${rows} записей)`;
+        banner.style.display = 'block';
+        document.getElementById('global-file-name').textContent = filename;
+        globalFile.style.display = 'flex';
+    } else {
+        banner.style.display = 'none';
+        globalFile.style.display = 'none';
+    }
+
+    updateFileSelectValue('search-file-select', filename);
+    updateFileSelectValue('ai-file-select', filename);
+    updateAiRowsInfo();
+}
+
+document.getElementById('banner-clear-btn').onclick = () => setActiveFile(null, 0);
+
+function updateFileSelectValue(selectId, filename) {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    for (const opt of sel.options) {
+        if (opt.value === filename) { sel.value = filename; return; }
+    }
+}
+
+document.getElementById('search-file-select').onchange = function() {
+    const sel = this.value;
+    const rows = sel ? (fileRowsMap[sel] || 0) : 0;
+    setActiveFile(sel || null, rows);
+};
+
+document.getElementById('ai-file-select').onchange = function() {
+    const sel = this.value;
+    const rows = sel ? (fileRowsMap[sel] || 0) : 0;
+    setActiveFile(sel || null, rows);
+    updateAiRowsInfo();
+};
+
+document.getElementById('ai-max-rows').onchange = updateAiRowsInfo;
+
+function updateAiRowsInfo() {
+    const el = document.getElementById('ai-rows-info');
+    if (!currentFilename) { el.textContent = ''; return; }
+    const maxRows = parseInt(document.getElementById('ai-max-rows').value);
+    const total = fileRowsMap[currentFilename] || currentFileRows;
+    const chunks = Math.ceil(Math.min(total, maxRows) / 200);
+    el.textContent = total > 0
+        ? `📊 Файл: ${total} строк. Будет проанализировано: до ${Math.min(total, maxRows)} строк (~${chunks} запрос${chunks === 1 ? '' : chunks < 5 ? 'а' : 'ов'} к GigaChat)`
+        : '';
+}
+
+let fileRowsMap = {};
+
+async function loadFilesList() {
+    const resp = await fetch('/api/get-uploaded-files', { credentials: 'include' });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (!data.success) return;
+
+    fileRowsMap = {};
+    data.files.forEach(f => { fileRowsMap[f.name] = f.rows; });
+
+    renderFilesList(data.files);
+    updateFileSelects(data.files);
+}
+
+function renderFilesList(files) {
+    const container = document.getElementById('files-list-container');
+    if (!files || files.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Файлов пока нет</div><div class="empty-text">Загрузите файл выше</div></div>';
+        return;
+    }
+    container.innerHTML = files.map(f => `
+        <div class="file-list-item" id="file-item-${escapeHtml(f.name)}">
+            <div class="file-item-info">
+                <span class="file-item-icon">${getFileIcon(f.name)}</span>
+                <div>
+                    <div class="file-item-name">${escapeHtml(f.name)}</div>
+                    <div class="file-item-meta">${f.rows} записей · Загружен: ${escapeHtml(f.uploader || '—')} · ${formatDate(f.date)}</div>
                 </div>
-            `).join('');
-        }
+            </div>
+            <div class="file-item-actions">
+                <button class="btn-use-file btn-secondary" onclick="selectFileForSearch('${escapeHtml(f.name)}', ${f.rows})">Использовать</button>
+                <button class="btn-delete-file btn-danger" onclick="deleteFile('${escapeHtml(f.name)}')">🗑</button>
+            </div>
+        </div>
+    `).join('');
+}
 
-        // Переключение вкладок
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
-            });
+function updateFileSelects(files) {
+    const list = files || Object.keys(fileRowsMap).map(name => ({ name, rows: fileRowsMap[name] }));
+    ['search-file-select', 'ai-file-select'].forEach(id => {
+        const sel = document.getElementById(id);
+        const prev = sel.value;
+        sel.innerHTML = '<option value="">— выберите файл —</option>' +
+            list.map(f => `<option value="${escapeHtml(f.name)}">${escapeHtml(f.name)} (${f.rows} зап.)</option>`).join('');
+        if (prev && list.find(f => f.name === prev)) sel.value = prev;
+    });
+}
+
+function getFileIcon(name) {
+    const ext = name.split('.').pop().toLowerCase();
+    return { csv: '📊', txt: '📝', pdf: '📕', docx: '📄', doc: '📄', xlsx: '📗', xls: '📗', rtf: '📝' }[ext] || '📎';
+}
+
+function formatDate(isoStr) {
+    if (!isoStr) return '—';
+    try { return new Date(isoStr).toLocaleString('ru-RU'); } catch { return isoStr; }
+}
+
+function selectFileForSearch(filename, rows) {
+    setActiveFile(filename, rows);
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelector('[data-tab="atm"]').classList.add('active');
+    document.getElementById('tab-atm').classList.add('active');
+}
+
+async function deleteFile(filename) {
+    if (!confirm(`Удалить файл «${filename}»? Это действие нельзя отменить.`)) return;
+    const resp = await fetch('/api/delete-file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ filename })
+    });
+    const data = await resp.json();
+    if (data.success) {
+        if (currentFilename === filename) setActiveFile(null, 0);
+        loadFilesList();
+    } else {
+        alert(data.message || 'Ошибка удаления');
+    }
+}
+
+document.getElementById('refresh-files-btn').onclick = loadFilesList;
+
+const fileInput = document.getElementById('file-input');
+const dropzone = document.getElementById('dropzone');
+
+document.getElementById('select-file-btn').onclick = () => fileInput.click();
+
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', async e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) await uploadFile(file);
+});
+
+fileInput.onchange = async e => {
+    const file = e.target.files[0];
+    if (file) await uploadFile(file);
+};
+
+async function uploadFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    const statusDiv = document.getElementById('upload-status');
+    statusDiv.innerHTML = '<div class="info-message">⏳ Загрузка и анализ файла...</div>';
+
+    try {
+        const resp = await fetch('/api/upload', { method: 'POST', body: formData, credentials: 'include' });
+        const data = await resp.json();
+
+        if (data.success) {
+            statusDiv.innerHTML = `
+                <div class="success-message">✅ ${escapeHtml(data.message)}</div>
+                <div class="file-stats">📊 Обработано записей: <strong>${data.rows}</strong></div>
+            `;
+            setActiveFile(data.filename, data.rows);
+            fileRowsMap[data.filename] = data.rows;
+            await loadFilesList();
+
+            if (data.preview && data.preview.length) {
+                statusDiv.innerHTML += renderPreview(data.preview);
+            }
+        } else {
+            statusDiv.innerHTML = `<div class="error-message">❌ ${escapeHtml(data.message)}</div>`;
+        }
+    } catch (e) {
+        statusDiv.innerHTML = '<div class="error-message">❌ Ошибка загрузки файла</div>';
+    }
+}
+
+function renderPreview(preview) {
+    if (!preview || !preview.length) return '';
+    let html = '<div class="preview-section"><h4>Предпросмотр (первые записи):</h4><div class="preview-table">';
+    if (typeof preview[0] === 'object') {
+        const headers = Object.keys(preview[0]);
+        html += '<table><thead><tr>' + headers.map(h => `<th>${escapeHtml(h)}</th>`).join('') + '</tr></thead><tbody>';
+        preview.slice(0, 10).forEach(row => {
+            html += '<tr>' + headers.map(h => `<td>${escapeHtml(String(row[h] || ''))}</td>`).join('') + '</tr>';
+        });
+        html += '</tbody></table>';
+    } else {
+        html += `<pre>${escapeHtml(JSON.stringify(preview.slice(0, 10), null, 2))}</pre>`;
+    }
+    html += '</div></div>';
+    return html;
+}
+
+const atmSearch = document.getElementById('atm-search');
+const atmBtn = document.getElementById('atm-search-btn');
+const clearBtn = document.getElementById('clear-search-btn');
+
+async function searchInUploadedFile() {
+    const query = atmSearch.value.trim();
+    if (!query) { alert('Введите запрос для поиска'); return; }
+    if (!currentFilename) { alert('Выберите файл для поиска (выпадающий список выше)'); return; }
+
+    const resultsDiv = document.getElementById('atm-results');
+    const statsDiv = document.getElementById('atm-stats');
+    resultsDiv.innerHTML = '<div class="loader"></div>';
+
+    try {
+        const resp = await fetch('/api/search-in-file', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ filename: currentFilename, query })
+        });
+        const data = await resp.json();
+
+        if (data.success && data.data.length) {
+            statsDiv.innerHTML = `🔍 Найдено: <strong>${data.count}</strong> из ${data.total} записей`;
+            resultsDiv.innerHTML = data.data.map((item, idx) => renderSmartResult(item, idx)).join('');
+        } else if (!data.success) {
+            statsDiv.innerHTML = '';
+            resultsDiv.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">${escapeHtml(data.message)}</div></div>`;
+        } else {
+            statsDiv.innerHTML = '';
+            resultsDiv.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍❓</div><div class="empty-title">Ничего не найдено</div><div class="empty-text">По запросу «${escapeHtml(query)}» ничего не найдено в файле <strong>${escapeHtml(currentFilename)}</strong></div></div>`;
+        }
+    } catch (e) {
+        resultsDiv.innerHTML = '<div class="empty-state">⚠️ Ошибка при поиске</div>';
+    }
+}
+
+function detectCategory(text) {
+    const t = String(text);
+    if (/\b\d{10,11}\b/.test(t)) return { icon: '📞', name: 'Телефон', color: '#3b82f6' };
+    if (/@[\w.]+\.\w+/.test(t)) return { icon: '📧', name: 'Email', color: '#8b5cf6' };
+    if (/ул\.|пр\.|пер\.|д\.|корп|бульв|шоссе|проспект/i.test(t)) return { icon: '📍', name: 'Адрес', color: '#10b981' };
+    if (/руб|₽|\$|€|цена|стоим|тариф/i.test(t)) return { icon: '💰', name: 'Финансы', color: '#f59e0b' };
+    if (/банк|банком|atm|cash/i.test(t)) return { icon: '🏧', name: 'Банкомат', color: '#1a5c3e' };
+    if (/дата|date|\d{2}\.\d{2}\.\d{4}|\d{4}-\d{2}-\d{2}/i.test(t)) return { icon: '📅', name: 'Дата', color: '#ef4444' };
+    return { icon: '📄', name: 'Данные', color: '#64748b' };
+}
+
+function renderSmartResult(item, idx) {
+    if (item.number && item.address) {
+        return `<div class="smart-card atm-card-smart">
+            <div class="smart-card-badge" style="background:#1a5c3e;">🏧 Банкомат</div>
+            <div class="smart-field"><span class="smart-label">Номер</span><span class="smart-value mono">${escapeHtml(item.number)}</span></div>
+            <div class="smart-field"><span class="smart-label">Адрес</span><span class="smart-value">${escapeHtml(item.address)}</span></div>
+            ${item.city ? `<div class="smart-field"><span class="smart-label">Город</span><span class="smart-value">${escapeHtml(item.city)}</span></div>` : ''}
+        </div>`;
+    }
+
+    if (typeof item === 'object') {
+        const entries = Object.entries(item);
+        const fields = entries.map(([k, v]) => {
+            const strVal = String(v || '');
+            const cat = detectCategory(strVal);
+            const display = strVal.length > 100 ? strVal.slice(0, 100) + '…' : strVal;
+            return `<div class="smart-field">
+                <span class="smart-label">${escapeHtml(k)}</span>
+                <span class="smart-value">
+                    <span class="cat-dot" style="background:${cat.color};" title="${cat.name}"></span>
+                    ${escapeHtml(display)}
+                </span>
+            </div>`;
         });
 
-        // Поиск банкоматов
-        const atmSearch = document.getElementById('atm-search');
-        const atmBtn = document.getElementById('atm-search-btn');
-        
-        async function handleAtmSearch() {
-            const query = atmSearch.value.trim();
-            if (!query) return;
-            const results = searchAtms(query);
-            renderAtmResults(results, query);
+        const allText = entries.map(([, v]) => String(v)).join(' ');
+        const mainCat = detectCategory(allText);
+
+        return `<div class="smart-card">
+            <div class="smart-card-badge" style="background:${mainCat.color};">${mainCat.icon} ${mainCat.name}</div>
+            ${fields.join('')}
+        </div>`;
+    }
+
+    const text = String(item);
+    const cat = detectCategory(text);
+    const display = text.length > 100 ? text.slice(0, 100) + '…' : text;
+    return `<div class="smart-card">
+        <div class="smart-card-badge" style="background:${cat.color};">${cat.icon} ${cat.name}</div>
+        <div class="smart-field"><span class="smart-value">${escapeHtml(display)}</span></div>
+    </div>`;
+}
+
+atmBtn.onclick = searchInUploadedFile;
+clearBtn.onclick = () => {
+    atmSearch.value = '';
+    document.getElementById('atm-results').innerHTML = '';
+    document.getElementById('atm-stats').innerHTML = '';
+};
+atmSearch.onkeypress = e => { if (e.key === 'Enter') { e.preventDefault(); searchInUploadedFile(); } };
+
+document.getElementById('load-yandex-btn').onclick = async () => {
+    const url = document.getElementById('yandex-url').value.trim();
+    if (!url) { alert('Введите ссылку'); return; }
+    const statusDiv = document.getElementById('yandex-status');
+    statusDiv.innerHTML = '<div class="info-message">⏳ Загрузка файла с Яндекс.Диска...</div>';
+    document.getElementById('yandex-import-section').style.display = 'none';
+
+    try {
+        const response = await fetch('/api/upload-yandex', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ url })
+        });
+        const data = await response.json();
+        if (data.success) {
+            setActiveFile(data.filename, data.rows);
+            fileRowsMap[data.filename] = data.rows;
+            statusDiv.innerHTML = `<div class="success-message">✅ ${escapeHtml(data.message)}</div>`;
+            if (data.preview && data.preview.length) {
+                document.getElementById('yandex-preview').innerHTML = renderPreview(data.preview);
+            }
+            document.getElementById('yandex-import-section').style.display = 'block';
+            await loadFilesList();
+        } else {
+            statusDiv.innerHTML = `<div class="error-message">❌ ${escapeHtml(data.message)}</div>`;
         }
-        
-        atmBtn.onclick = handleAtmSearch;
-        atmSearch.onkeypress = e => e.key === 'Enter' && handleAtmSearch();
-        
-        document.querySelectorAll('.filter-chip').forEach(chip => {
-            chip.onclick = () => { atmSearch.value = chip.dataset.query; handleAtmSearch(); };
+    } catch (e) {
+        statusDiv.innerHTML = '<div class="error-message">❌ Ошибка при загрузке файла</div>';
+    }
+};
+
+document.getElementById('yandex-import-btn').onclick = () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelector('[data-tab="atm"]').classList.add('active');
+    document.getElementById('tab-atm').classList.add('active');
+};
+
+async function sendToAI() {
+    const inputEl = document.getElementById('chat-input');
+    const question = inputEl.value.trim();
+    if (!question) { alert('Введите вопрос'); return; }
+
+    const sendBtn = document.getElementById('chat-send-btn');
+    const messagesDiv = document.getElementById('chat-messages');
+    const maxRows = parseInt(document.getElementById('ai-max-rows').value);
+    const aiFile = document.getElementById('ai-file-select').value;
+
+    messagesDiv.insertAdjacentHTML('beforeend', `
+        <div class="message user">
+            <div class="message-avatar">👤</div>
+            <div class="message-content">${escapeHtml(question)}</div>
+        </div>
+    `);
+    inputEl.value = '';
+    sendBtn.disabled = true;
+
+    const loadingId = 'loading-' + Date.now();
+    messagesDiv.insertAdjacentHTML('beforeend', `
+        <div class="message assistant" id="${loadingId}">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content"><div class="typing-indicator">✍️ Анализирую${aiFile ? ` файл (до ${maxRows} строк)` : ''}...</div></div>
+        </div>
+    `);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    try {
+        const body = { question, max_rows: maxRows };
+        if (aiFile) body.filename = aiFile;
+
+        const response = await fetch('/api/gigachat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(body)
         });
 
-        // Загрузка файлов
-        let currentFilename = null;
-        const fileInput = document.getElementById('file-input');
-        document.getElementById('select-file-btn').onclick = () => fileInput.click();
-        
-        fileInput.onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const formData = new FormData();
-            formData.append('file', file);
-            const statusDiv = document.getElementById('upload-status');
-            statusDiv.innerHTML = '<div class="info-message">Загрузка...</div>';
-            try {
-                const resp = await fetch('/api/upload', { method: 'POST', body: formData });
-                const data = await resp.json();
-                if (data.success) {
-                    currentFilename = data.filename;
-                    statusDiv.innerHTML = `<div class="success-message">✅ Загружено ${data.rows} записей</div>`;
-                    document.getElementById('file-search-section').style.display = 'block';
-                    if (data.preview?.length) {
-                        statusDiv.innerHTML += `<div class="preview-section"><pre>${JSON.stringify(data.preview, null, 2)}</pre></div>`;
-                    }
-                } else {
-                    statusDiv.innerHTML = `<div class="error-message">❌ ${data.message}</div>`;
-                }
-            } catch(e) { statusDiv.innerHTML = '<div class="error-message">Ошибка загрузки</div>'; }
-        };
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
 
-        // Поиск в файле
-        document.getElementById('file-search-btn').onclick = async () => {
-            const query = document.getElementById('file-search').value.trim();
-            if (!query || !currentFilename) return;
-            const resultsDiv = document.getElementById('file-results');
-            const statsDiv = document.getElementById('file-stats');
-            resultsDiv.innerHTML = '<div class="loader"></div>';
-            try {
-                const resp = await fetch(`/api/search-in-file?filename=${encodeURIComponent(currentFilename)}&q=${encodeURIComponent(query)}`);
-                const data = await resp.json();
-                if (data.success && data.data.length) {
-                    statsDiv.innerHTML = `🔍 Найдено: ${data.count}`;
-                    resultsDiv.innerHTML = data.data.map(item => `<div class="result-card"><pre>${escapeHtml(JSON.stringify(item, null, 2))}</pre></div>`).join('');
-                } else {
-                    resultsDiv.innerHTML = '<div class="empty-state">Ничего не найдено</div>';
-                }
-            } catch(e) { resultsDiv.innerHTML = '<div class="empty-state">Ошибка</div>'; }
-        };
+        if (!response.ok) throw new Error(`Ошибка ${response.status}`);
+        const data = await response.json();
 
-        // Экспорт
-        document.getElementById('export-results-btn').onclick = async () => {
-            const items = [];
-            document.querySelectorAll('#file-results .result-card pre').forEach(pre => {
-                try { items.push(JSON.parse(pre.innerText)); } catch(e) { items.push({ text: pre.innerText }); }
-            });
-            if (!items.length) return alert('Нет данных');
-            const resp = await fetch('/api/export', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: items }) });
-            if (resp.ok) {
-                const blob = await resp.blob();
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = `export_${Date.now()}.csv`;
-                a.click();
-            }
-        };
+        const rowsInfo = data.rows_analyzed > 0
+            ? `<div class="ai-rows-badge">📊 Проанализировано строк: ${data.rows_analyzed}</div>` : '';
 
-        // AI Ассистент
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        const formatted = escapeHtml(data.answer)
+            .replace(/\n/g, '<br>')
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
-        async function sendToAI() {
-            const inputEl = document.getElementById('chat-input');
-            const question = inputEl.value.trim();
-            if (!question) return;
-            
-            const sendBtn = document.getElementById('chat-send-btn');
-            sendBtn.disabled = true;
-            inputEl.disabled = true;
-            
-            const messagesDiv = document.getElementById('chat-messages');
-            messagesDiv.insertAdjacentHTML('beforeend', `
-                <div class="message user">
-                    <div class="message-avatar">👤</div>
-                    <div class="message-content">${escapeHtml(question)}</div>
-                </div>
-            `);
-            inputEl.value = '';
-            
-            const loadingId = 'loading-' + Date.now();
-            messagesDiv.insertAdjacentHTML('beforeend', `
-                <div class="message assistant" id="${loadingId}">
-                    <div class="message-avatar">🤖</div>
-                    <div class="message-content">Печатает...</div>
-                </div>
-            `);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            
-            try {
-                const response = await fetch(`${AI_BACKEND_URL}/gigachat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: question })
-                });
-                
-                document.getElementById(loadingId)?.remove();
-                
-                if (!response.ok) throw new Error(`Ошибка ${response.status}`);
-                const data = await response.json();
-                
-                messagesDiv.insertAdjacentHTML('beforeend', `
-                    <div class="message assistant">
-                        <div class="message-avatar">🤖</div>
-                        <div class="message-content">${escapeHtml(data.answer)}</div>
-                    </div>
-                `);
-            } catch (error) {
-                document.getElementById(loadingId)?.remove();
-                messagesDiv.insertAdjacentHTML('beforeend', `
-                    <div class="message assistant">
-                        <div class="message-avatar">🤖</div>
-                        <div class="message-content">❌ Ошибка при обращении к серверу. Пожалуйста, попробуйте позже.</div>
-                    </div>
-                `);
-            } finally {
-                sendBtn.disabled = false;
-                inputEl.disabled = false;
-                inputEl.focus();
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
-        }
-        
-        document.getElementById('chat-send-btn').onclick = sendToAI;
-        document.getElementById('chat-input').onkeypress = e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendToAI());
-    </script>
+        messagesDiv.insertAdjacentHTML('beforeend', `
+            <div class="message assistant">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">${rowsInfo}${formatted}</div>
+            </div>
+        `);
+    } catch (error) {
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+        messagesDiv.insertAdjacentHTML('beforeend', `
+            <div class="message assistant">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">❌ Ошибка при обращении к серверу. Попробуйте позже.</div>
+            </div>
+        `);
+    } finally {
+        sendBtn.disabled = false;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+}
+
+document.getElementById('chat-send-btn').onclick = sendToAI;
+document.getElementById('chat-input').onkeypress = e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendToAI(); }
+};
+
+document.getElementById('ai-file-select').addEventListener('change', function() {
+    const sel = this.value;
+    if (sel) setActiveFile(sel, fileRowsMap[sel] || 0);
+    else setActiveFile(null, 0);
+    updateAiRowsInfo();
+    const ctx = document.getElementById('chat-context-info');
+    ctx.innerHTML = sel
+        ? `<div class="context-badge">📄 Контекст: <strong>${escapeHtml(sel)}</strong> (${fileRowsMap[sel] || '?'} строк)</div>`
+        : '<div class="context-badge">💡 Файл не выбран — ассистент ответит без контекста</div>';
+});
+
+async function loadUsers() {
+    const resp = await fetch('/api/users', { credentials: 'include' });
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (!data.success) return;
+    populateAdminPwSelect(data.users);
+    const container = document.getElementById('users-list');
+    container.innerHTML = data.users.map(u => `
+        <div class="user-item">
+            <span class="user-item-name">${escapeHtml(u.username)}</span>
+            <span class="role-badge role-${u.role}">${u.role === 'admin' ? '⭐ Администратор' : '👤 Пользователь'}</span>
+            ${u.username !== currentUser
+                ? `<button class="btn-danger btn-sm" onclick="deleteUser('${escapeHtml(u.username)}')">Удалить</button>`
+                : '<span class="self-badge">— вы</span>'}
+        </div>
+    `).join('');
+}
+
+async function deleteUser(username) {
+    if (!confirm(`Удалить пользователя «${username}»?`)) return;
+    const resp = await fetch('/api/delete-user', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', body: JSON.stringify({ username })
+    });
+    const data = await resp.json();
+    if (data.success) loadUsers(); else alert(data.message);
+}
+
+document.getElementById('add-user-btn').onclick = async () => {
+    const username = document.getElementById('new-username').value.trim();
+    const password = document.getElementById('new-password').value.trim();
+    const role = document.getElementById('new-role').value;
+    const statusEl = document.getElementById('add-user-status');
+    if (!username || !password) { showMsg(statusEl, 'error', 'Заполните логин и пароль'); return; }
+
+    const resp = await fetch('/api/register', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', body: JSON.stringify({ username, password, role })
+    });
+    const data = await resp.json();
+    if (data.success) {
+        showMsg(statusEl, 'success', data.message);
+        document.getElementById('new-username').value = '';
+        document.getElementById('new-password').value = '';
+        loadUsers();
+    } else {
+        showMsg(statusEl, 'error', data.message);
+    }
+};
+
+document.getElementById('extend-site-btn').onclick = async () => {
+    const statusEl = document.getElementById('extend-status');
+    statusEl.innerHTML = '<div class="info-message">⏳ Отправка запроса...</div>';
+    const resp = await fetch('/api/extend-site', { method: 'POST', credentials: 'include' });
+    const data = await resp.json();
+    showMsg(statusEl, data.success ? 'success' : 'error', data.message);
+};
+
+
+document.getElementById('profile-change-pw-btn').onclick = async () => {
+    const old_password = document.getElementById('profile-old-pw').value.trim();
+    const new_password = document.getElementById('profile-new-pw').value.trim();
+    const confirm      = document.getElementById('profile-confirm-pw').value.trim();
+    const statusEl     = document.getElementById('profile-pw-status');
+
+    if (!old_password) { showMsg(statusEl, 'error', 'Введите текущий пароль'); return; }
+    if (!new_password) { showMsg(statusEl, 'error', 'Введите новый пароль'); return; }
+    if (new_password.length < 4) { showMsg(statusEl, 'error', 'Пароль должен быть не короче 4 символов'); return; }
+    if (new_password !== confirm) { showMsg(statusEl, 'error', 'Пароли не совпадают'); return; }
+
+    const resp = await fetch('/api/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ username: currentUser, old_password, new_password, confirm })
+    });
+    const data = await resp.json();
+    showMsg(statusEl, data.success ? 'success' : 'error', data.message);
+    if (data.success) {
+        document.getElementById('profile-old-pw').value = '';
+        document.getElementById('profile-new-pw').value = '';
+        document.getElementById('profile-confirm-pw').value = '';
+    }
+};
+
+function populateAdminPwSelect(users) {
+    const sel = document.getElementById('admin-pw-user');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">— выберите пользователя —</option>' +
+        users.map(u => `<option value="${escapeHtml(u.username)}">${escapeHtml(u.username)} (${u.role})</option>`).join('');
+}
+
+document.getElementById('admin-change-pw-btn').onclick = async () => {
+    const username     = document.getElementById('admin-pw-user').value;
+    const new_password = document.getElementById('admin-new-pw').value.trim();
+    const confirm      = document.getElementById('admin-confirm-pw').value.trim();
+    const statusEl     = document.getElementById('admin-pw-status');
+
+    if (!username) { showMsg(statusEl, 'error', 'Выберите пользователя'); return; }
+    if (!new_password) { showMsg(statusEl, 'error', 'Введите новый пароль'); return; }
+    if (new_password.length < 4) { showMsg(statusEl, 'error', 'Пароль должен быть не короче 4 символов'); return; }
+    if (new_password !== confirm) { showMsg(statusEl, 'error', 'Пароли не совпадают'); return; }
+
+    const resp = await fetch('/api/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ username, new_password, confirm, old_password: '' })
+    });
+    const data = await resp.json();
+    showMsg(statusEl, data.success ? 'success' : 'error', data.message);
+    if (data.success) {
+        document.getElementById('admin-new-pw').value = '';
+        document.getElementById('admin-confirm-pw').value = '';
+    }
+};
+
+
+function refreshProfileTab() {
+    const uEl = document.getElementById('profile-username-display');
+    const rEl = document.getElementById('profile-role-display');
+    if (uEl) uEl.textContent = currentUser || '—';
+    if (rEl) {
+        rEl.textContent = currentRole === 'admin' ? '⭐ Администратор' : '👤 Пользователь';
+        rEl.className = 'profile-info-value role-badge ' + (currentRole === 'admin' ? 'role-admin' : 'role-user');
+    }
+}
+
+document.getElementById('profile-change-pw-btn').onclick = async () => {
+    const old_password = document.getElementById('profile-old-pw').value.trim();
+    const new_password = document.getElementById('profile-new-pw').value.trim();
+    const confirm      = document.getElementById('profile-confirm-pw').value.trim();
+    const statusEl     = document.getElementById('profile-pw-status');
+    if (!old_password) { showMsg(statusEl, 'error', 'Введите текущий пароль'); return; }
+    if (!new_password) { showMsg(statusEl, 'error', 'Введите новый пароль'); return; }
+    if (new_password.length < 4) { showMsg(statusEl, 'error', 'Пароль должен быть не короче 4 символов'); return; }
+    if (new_password !== confirm) { showMsg(statusEl, 'error', 'Пароли не совпадают'); return; }
+    const resp = await fetch('/api/change-password', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
+        body: JSON.stringify({username: currentUser, old_password, new_password, confirm})
+    });
+    const data = await resp.json();
+    showMsg(statusEl, data.success ? 'success' : 'error', data.message);
+    if (data.success) {
+        document.getElementById('profile-old-pw').value = '';
+        document.getElementById('profile-new-pw').value = '';
+        document.getElementById('profile-confirm-pw').value = '';
+    }
+};
+
+document.getElementById('profile-logout-btn').onclick = async () => {
+    await fetch('/api/logout', {method: 'POST', credentials: 'include'});
+    currentUser = null; currentRole = null; currentFilename = null;
+    showLoginOverlay();
+};
+
+checkAuth();
+</script>
 </body>
 </html>
